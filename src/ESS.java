@@ -9,10 +9,10 @@ import java.util.*;
  *
  * @author Alfred Li
  */
-public class project02 {
+public class ESS {
     public static void main(String[] args) {
         if (args.length == 0 || args.length > 4) {
-            System.err.println("Usage: ./project02 popSize [percentHawks] [resourceAmt] [costHawk-Hawk]");
+            System.err.println("Usage: java ESS popSize [percentHawks] [resourceAmt] [costHawk-Hawk]");
             System.exit(0);
         } else {
             run(args);
