@@ -1,5 +1,14 @@
 import java.util.*;
 
+/**
+ * Simulate a number of individuals in a population
+ * Individuals will adopt different strategies when engaged
+ * in conflict with other members of the same species.
+ * There will be two strategies that are tested: "Hawks" and "Doves".
+ * Usage: ./project02 popSize [percentHawks] [resourceAmt] [costHawk-Hawk]
+ *
+ * @author Alfred Li
+ */
 public class project02 {
     public static void main(String[] args) {
         if (args.length == 0 || args.length > 4) {
@@ -14,7 +23,6 @@ public class project02 {
         List<Individual> individuals = create(args);
         Scanner scan = new Scanner(System.in);
         int input = 0;
-        int encounter = 0;
         while (input != 8) {
             menu();
             input = Integer.parseInt(scan.nextLine());
@@ -29,60 +37,22 @@ public class project02 {
                 case 1 -> stats();
                 case 2 -> displayInfo(individuals);
                 case 3 -> sortedInfo(individuals);
-                case 4 -> {
-                    for (int i = 0; i < 1000; i++) {
-                        if (Individual.living < 2) {
-                            System.out.println("Living: " + Individual.living);
-                            System.out.println("Unable to perform interactions");
-                            break;
-                        }
-                        encounter++;
-                        System.out.println("Encounter: " + encounter);
-                        interactions(individuals);
-                    }
-                }
-                case 5 -> {
-                    for (int i = 0; i < 10000; i++) {
-                        if (Individual.living < 2) {
-                            System.out.println("Living: " + Individual.living);
-                            System.out.println("Unable to perform interactions");
-                            break;
-                        }
-                        encounter++;
-                        System.out.println("Encounter: " + encounter);
-                        interactions(individuals);
-                    }
-                }
+                case 4 -> interactions(individuals, 1000);
+                case 5 -> interactions(individuals, 10000);
                 case 6 -> {
                     System.out.println("Enter the number of interaction");
                     System.out.print("> ");
-                    int n = Integer.parseInt(scan.nextLine());
-                    for (int i = 0; i < n; i++) {
-                        if (Individual.living < 2) {
-                            System.out.println("Living: " + Individual.living);
-                            System.out.println("Unable to perform interactions");
-                            break;
-                        }
-                        encounter++;
-                        System.out.println("Encounter: " + encounter);
-                        interactions(individuals);
-                    }
+                    int num = Integer.parseInt(scan.nextLine());
+                    interactions(individuals, num);
                 }
                 case 7 -> {
                     String s = "";
                     while (!(s.equals("stop"))) {
-                        if (Individual.living < 2) {
-                            System.out.println("Living: " + Individual.living);
-                            System.out.println("Unable to perform interactions");
-                            break;
-                        }
-                        encounter++;
-                        System.out.println("Encounter: " + encounter);
-                        interactions(individuals);
+                        interactions(individuals, 1);
                         s = scan.nextLine();
                     }
                 }
-                case 8 -> System.out.println("Quit");
+                case 8 -> System.out.print("Quit");
             }
             System.out.println();
         }
@@ -94,6 +64,7 @@ public class project02 {
         Individual.resourceAmount = 50;
         Individual.hawkPenalty = 100;
         Individual.living = Individual.population;
+        Individual.encounter = 0;
         if (args.length == 2)
             Individual.hawkPercent = Integer.parseInt(args[1]);
 
@@ -143,7 +114,20 @@ public class project02 {
         }
     }
 
-    public static void interactions(List<Individual> individuals) {
+    public static void interactions(List<Individual> individuals, int num) {
+        for (int i = 0; i < num; i++) {
+            if (Individual.living < 2) {
+                System.out.println("Living: " + Individual.living);
+                System.out.println("Unable to perform interactions");
+                break;
+            }
+            Individual.encounter++;
+            System.out.println("Encounter: " + Individual.encounter);
+            interaction(individuals);
+        }
+    }
+
+    public static void interaction(List<Individual> individuals) {
         Random random = new Random();
         int first = random.nextInt(individuals.size());
         while (individuals.get(first).isDead)
@@ -240,6 +224,7 @@ public class project02 {
         static int resourceAmount;
         static int hawkPenalty;
         static int living;
+        static int encounter;
 
         int id;
         int resource;
