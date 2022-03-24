@@ -5,14 +5,14 @@ import java.util.*;
  * Individuals will adopt different strategies when engaged
  * in conflict with other members of the same species.
  * There will be two strategies that are tested: "Hawks" and "Doves".
- * Usage: ./project02 popSize [percentHawks] [resourceAmt] [costHawk-Hawk]
+ * Usage: Simulation popSize [percentHawks] [resourceAmt] [costHawk-Hawk]
  *
  * @author Alfred Li
  */
-public class ESS {
+public class Simulation {
     public static void main(String[] args) {
         if (args.length == 0 || args.length > 4) {
-            System.err.println("Usage: ./project02 popSize [percentHawks] [resourceAmt] [costHawk-Hawk]");
+            System.err.println("Usage: Simulation popSize [percentHawks] [resourceAmt] [costHawk-Hawk]");
             System.exit(0);
         } else {
             List<Individual> individuals = create(args);
@@ -29,8 +29,10 @@ public class ESS {
         int input = 0;
         while (input != 8) {
             menu();
+            // Read user option
             input = Integer.parseInt(scan.nextLine());
             System.out.println();
+            // Validate option
             while (input < 1 || input > 8) {
                 System.out.println("Unexpected value");
                 System.out.println("Please try again");
@@ -78,6 +80,7 @@ public class ESS {
         Individual.hawkPenalty = 100;
         Individual.living = Individual.population;
         Individual.encounter = 0;
+        // Update information if argument provided
         if (args.length == 2)
             Individual.hawkPercent = Integer.parseInt(args[1]);
         if (args.length == 3)
@@ -85,6 +88,7 @@ public class ESS {
         if (args.length == 4)
             Individual.hawkPenalty = Integer.parseInt(args[3]);
 
+        // Create list of individuals
         List<Individual> individuals = new ArrayList<>();
         int numOfHawks = Individual.population * Individual.hawkPercent / 100;
         for (int i = 0; i < numOfHawks; i++) {
@@ -164,17 +168,17 @@ public class ESS {
      */
     public static void interaction(List<Individual> individuals) {
         Random random = new Random();
-
         // Pick first individual that is not dead
         int first = random.nextInt(individuals.size());
-        while (individuals.get(first).isDead)
+        while (individuals.get(first).isDead) {
             first = random.nextInt(individuals.size());
-
+        }
         // Pick second individual that is not dead and not the same as first
         int second = random.nextInt(individuals.size());
         while (individuals.get(second).isDead || first == second) {
             second = random.nextInt(individuals.size());
         }
+        // Perform interaction based on strategy
         Individual one = individuals.get(first);
         Individual two = individuals.get(second);
         if (one.strategy.equals("Dove") && two.strategy.equals("Dove")) {
@@ -318,7 +322,7 @@ public class ESS {
         }
 
         /**
-         * Change individual to dead
+         * Update individual to dead
          */
         public void dead() {
             this.strategy = "DEAD";
