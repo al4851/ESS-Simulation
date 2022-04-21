@@ -81,11 +81,11 @@ public class Simulation {
         Individual.living = Individual.population;
         Individual.encounter = 0;
         // Update information if argument provided
-        if (args.length == 2)
+        if (args.length > 1)
             Individual.hawkPercent = Integer.parseInt(args[1]);
-        if (args.length == 3)
+        if (args.length > 2)
             Individual.resourceAmount = Integer.parseInt(args[2]);
-        if (args.length == 4)
+        if (args.length > 3)
             Individual.hawkPenalty = Integer.parseInt(args[3]);
 
         // Create list of individuals
@@ -151,6 +151,7 @@ public class Simulation {
      */
     public static void interactions(List<Individual> individuals, int num) {
         for (int i = 0; i < num; i++) {
+            // Stop interaction if there is not enough individual
             if (Individual.living < 2) {
                 System.out.println("Living: " + Individual.living);
                 System.out.println("Unable to perform interactions");
@@ -204,7 +205,7 @@ public class Simulation {
         System.out.printf("Individual %d: %s\n", two.id, two.strategy);
         one.resource += Individual.resourceAmount / 2;
         two.resource += Individual.resourceAmount / 2;
-        System.out.printf("%s/%s: %s: +%d\t%s: +%d\n",
+        System.out.printf("%s/%s: %s: +%d\t\t%s: +%d\n",
                 one.strategy, two.strategy,
                 one.strategy, Individual.resourceAmount / 2,
                 two.strategy, Individual.resourceAmount / 2);
@@ -224,7 +225,7 @@ public class Simulation {
         System.out.printf("Individual %d: %s\n", one.id, one.strategy);
         System.out.printf("Individual %d: %s\n", two.id, two.strategy);
         one.resource += Individual.resourceAmount;
-        System.out.printf("%s/%s: %s: +%d\t%s: +0\n",
+        System.out.printf("%s/%s: %s: +%d\t\t%s: +0\n",
                 one.strategy, two.strategy,
                 one.strategy, Individual.resourceAmount,
                 two.strategy);
@@ -244,13 +245,20 @@ public class Simulation {
     public static void hawkHawk(Individual one, Individual two) {
         System.out.printf("Individual %d: %s\n", one.id, one.strategy);
         System.out.printf("Individual %d: %s\n", two.id, two.strategy);
-        int resource = Individual.hawkPenalty - Individual.resourceAmount;
-        one.resource -= resource;
+        int resource = Individual.resourceAmount - Individual.hawkPenalty;
+        one.resource += resource;
         two.resource -= Individual.hawkPenalty;
-        System.out.printf("%s/%s: %s: -%d\t%s: -%d\n",
-                one.strategy, two.strategy,
-                one.strategy, resource,
-                two.strategy, Individual.hawkPenalty);
+        if (resource >= 0) {
+            System.out.printf("%s/%s: %s: +%d\t\t%s: -%d\n",
+                    one.strategy, two.strategy,
+                    one.strategy, resource,
+                    two.strategy, Individual.hawkPenalty);
+        } else {
+            System.out.printf("%s/%s: %s: %d\t\t%s: -%d\n",
+                    one.strategy, two.strategy,
+                    one.strategy, resource,
+                    two.strategy, Individual.hawkPenalty);
+        }
         if (one.resource < 0) {
             one.dead();
             System.out.println("Hawk one has died!");
